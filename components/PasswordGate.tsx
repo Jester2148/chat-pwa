@@ -4,22 +4,31 @@ import { useState, useEffect } from 'react';
 import { Brain } from 'lucide-react';
 
 const SITE_PASSWORD = process.env.NEXT_PUBLIC_APP_SECRET_PASSWORD || 'pyro2148';
+const STORAGE_KEY = 'omnichat_auth';
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (sessionStorage.getItem('omnichat_auth') === 'true') {
+    const stored = localStorage.getItem(STORAGE_KEY) || sessionStorage.getItem(STORAGE_KEY);
+    if (stored === 'true') {
       setAuthenticated(true);
     }
+    setLoading(false);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input === SITE_PASSWORD) {
-      sessionStorage.setItem('omnichat_auth', 'true');
+      if (remember) {
+        localStorage.setItem(STORAGE_KEY, 'true');
+      } else {
+        sessionStorage.setItem(STORAGE_KEY, 'true');
+      }
       setAuthenticated(true);
     } else {
       setError(true);
@@ -27,6 +36,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
     }
   };
 
+  if (loading) return null;
   if (authenticated) return <>{children}</>;
 
   return (
@@ -43,6 +53,15 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
           className="w-full bg-slate-800 text-white rounded-xl px-4 py-3 text-center text-sm border border-slate-700 focus:border-emerald-500"
         />
         {error && <p className="text-red-400 text-xs">Incorrect password</p>}
+        <label className="flex items-center gap-2 text-sm text-slate-400 self-start">
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            className="w-4 h-4 rounded border-slate-600 bg-slate-800 accent-emerald-500"
+          />
+          Remember me on this device
+        </label>
         <button
           type="submit"
           disabled={!input}
