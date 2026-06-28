@@ -44,8 +44,8 @@ export default function MessageBubble({ message, isStreaming, onSpeak }: Props) 
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
           isUser
-            ? 'bg-blue-600 text-white rounded-br-md'
-            : 'bg-slate-800 text-slate-100 rounded-bl-md'
+            ? 'bg-slate-950 text-white rounded-br-md'
+            : 'bg-slate-700 text-slate-100 rounded-bl-md'
         }`}
       >
         {hasImages && (

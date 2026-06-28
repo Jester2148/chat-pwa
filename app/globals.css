@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
+  --background: #343541;
+  --foreground: #ececf1;
 }
 
 @theme inline {
@@ -10,6 +10,28 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-slate-50: #ececf1;
+  --color-slate-100: #d1d5db;
+  --color-slate-200: #acacbe;
+  --color-slate-300: #8e8ea0;
+  --color-slate-400: #565869;
+  --color-slate-500: #4d4d4f;
+  --color-slate-600: #565869;
+  --color-slate-700: #444654;
+  --color-slate-800: #40414f;
+  --color-slate-900: #2f2f2f;
+  --color-slate-950: #343541;
+  --color-blue-50: #e6f7f2;
+  --color-blue-100: #ccefe5;
+  --color-blue-200: #99dfcb;
+  --color-blue-300: #66cfb1;
+  --color-blue-400: #33bf97;
+  --color-blue-500: #10a37f;
+  --color-blue-600: #0e8c6b;
+  --color-blue-700: #0c7559;
+  --color-blue-800: #0a5e47;
+  --color-blue-900: #084735;
 }
 
 body {
@@ -20,7 +42,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+  scrollbar-color: #565869 transparent;
 }
 
 input, textarea, select {
@@ -28,8 +50,8 @@ input, textarea, select {
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px #3b82f6;
+  border-color: #10a37f;
+  box-shadow: 0 0 0 1px #10a37f;
 }
 
 @keyframes pulse-dot {
