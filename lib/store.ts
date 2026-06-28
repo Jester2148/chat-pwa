@@ -11,7 +11,9 @@ const DEFAULT_SETTINGS: Settings = {
   summarizationModel: 'openai/gpt-4o-mini',
   searchEnabled: false,
   reasoningEnabled: false,
-  ttsMode: 'off',
+  ttsMode: 'device',
+  lastProvider: 'openai',
+  lastModel: 'gpt-4o',
 };
 
 function generateId(): string {
@@ -51,12 +53,13 @@ export const useStore = create<AppState>()(
 
       createChat: (agent?) => {
         const id = generateId();
+        const { settings } = get();
         const newChat: Chat = {
           id,
           title: 'New Chat',
           messages: [],
-          provider: agent?.provider || 'openai',
-          model: agent?.model || 'gpt-4o',
+          provider: agent?.provider || settings.lastProvider,
+          model: agent?.model || settings.lastModel,
           agentId: agent?.id,
           createdAt: Date.now(),
         };

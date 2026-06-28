@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function ModelSelector({ chatId, provider, model }: Props) {
-  const { settings, updateChat } = useStore();
+  const { settings, updateChat, setSettings } = useStore();
   const [models, setModels] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -57,11 +57,14 @@ export default function ModelSelector({ chatId, provider, model }: Props) {
   }, [fetchModels]);
 
   const handleProviderChange = (newProvider: string) => {
-    updateChat(chatId, { provider: newProvider as Provider, model: '' });
+    const p = newProvider as Provider;
+    updateChat(chatId, { provider: p, model: '' });
+    setSettings({ lastProvider: p });
   };
 
   const handleModelChange = (newModel: string) => {
     updateChat(chatId, { model: newModel });
+    setSettings({ lastModel: newModel });
   };
 
   return (

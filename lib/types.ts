@@ -38,6 +38,8 @@ export interface Settings {
   searchEnabled: boolean;
   reasoningEnabled: boolean;
   ttsMode: 'off' | 'device' | 'api';
+  lastProvider: Provider;
+  lastModel: string;
 }
 
 export interface StreamChunk {
