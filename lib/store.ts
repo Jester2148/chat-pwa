@@ -161,6 +161,12 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'omnichat-storage',
+      version: 2,
+      merge: (persisted: any, current: AppState) => ({
+        ...current,
+        ...persisted,
+        settings: { ...current.settings, ...(persisted?.settings || {}) },
+      }),
       partialize: (state) => ({
         chats: state.incognitoMode ? [] : state.chats,
         activeChatId: state.incognitoMode ? null : state.activeChatId,
