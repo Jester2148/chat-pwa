@@ -22,6 +22,7 @@ import {
 import { useStore } from '@/lib/store';
 import type { Message, StreamChunk } from '@/lib/types';
 import { trimContext } from '@/lib/contextManager';
+import { speakDevice } from '@/lib/tts';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
 import SettingsModal from './SettingsModal';
@@ -192,6 +193,10 @@ export default function MobileLayout() {
             }
           } catch {}
         }
+      }
+
+      if (settings.ttsMode === 'device' && accContent) {
+        speakDevice(accContent);
       }
 
       if (chat.title === 'New Chat' && userMsg.content) {
