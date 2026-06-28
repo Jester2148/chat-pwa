@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { verifySecret } from '@/lib/auth';
 
 const PROVIDER_BASE_URLS: Record<string, string> = {
   openai: 'https://api.openai.com',
@@ -10,9 +9,6 @@ const PROVIDER_BASE_URLS: Record<string, string> = {
 };
 
 export async function POST(req: Request) {
-  if (!verifySecret(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
 
   const { provider, apiKey } = await req.json();
 

@@ -1,5 +1,3 @@
-import { verifySecret } from '@/lib/auth';
-
 const PROVIDER_BASE_URLS: Record<string, string> = {
   openai: 'https://api.openai.com/v1',
   deepseek: 'https://api.deepseek.com/v1',
@@ -216,9 +214,6 @@ async function streamGemini(url: string, apiKey: string, body: any, encoder: Tex
 }
 
 export async function POST(req: Request) {
-  if (!verifySecret(req)) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-  }
 
   const { provider, model, apiKey, messages, systemPrompt, searchEnabled, searchApiKey, temperature = 0.7 } = await req.json();
 
@@ -228,7 +223,7 @@ export async function POST(req: Request) {
     try {
       const searchRes = await fetch(`${new URL(req.url).origin}/api/search`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: req.headers.get('Authorization') || '' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: messages[messages.length - 1]?.content || '', apiKey: searchApiKey }),
       });
       if (searchRes.ok) {

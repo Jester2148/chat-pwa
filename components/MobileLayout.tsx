@@ -134,10 +134,7 @@ export default function MobileLayout() {
 
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_APP_SECRET_PASSWORD || 'dev'}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           provider: chat!.provider,
           model: chat!.model,

@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
-import { verifySecret } from '@/lib/auth';
 
 export async function POST(req: Request) {
-  if (!verifySecret(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
 
   const { query, apiKey } = await req.json();
 

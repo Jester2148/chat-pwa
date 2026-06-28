@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #343541;
+  --background: #171717;
   --foreground: #ececf1;
 }
 
@@ -11,17 +11,17 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --color-slate-50: #ececf1;
-  --color-slate-100: #d1d5db;
-  --color-slate-200: #acacbe;
-  --color-slate-300: #8e8ea0;
-  --color-slate-400: #565869;
-  --color-slate-500: #4d4d4f;
+  --color-slate-50: #ffffff;
+  --color-slate-100: #ececf1;
+  --color-slate-200: #d1d5db;
+  --color-slate-300: #9ca3af;
+  --color-slate-400: #8e8ea0;
+  --color-slate-500: #6b6b7b;
   --color-slate-600: #565869;
-  --color-slate-700: #444654;
-  --color-slate-800: #40414f;
-  --color-slate-900: #2f2f2f;
-  --color-slate-950: #343541;
+  --color-slate-700: #212121;
+  --color-slate-800: #1a1a1e;
+  --color-slate-900: #141418;
+  --color-slate-950: #171717;
   --color-blue-50: #e6f7f2;
   --color-blue-100: #ccefe5;
   --color-blue-200: #99dfcb;
@@ -42,7 +42,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #565869 transparent;
+  scrollbar-color: #2f2f2f transparent;
 }
 
 input, textarea, select {
