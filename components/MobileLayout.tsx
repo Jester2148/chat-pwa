@@ -164,6 +164,8 @@ export default function MobileLayout() {
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
+      let accContent = '';
+      let accReasoning = '';
 
       while (true) {
         const { done, value } = await reader.read();
@@ -180,13 +182,11 @@ export default function MobileLayout() {
           try {
             const chunk: StreamChunk = JSON.parse(jsonStr);
             if (chunk.type === 'text') {
-              updateMessage(chatId, assistantMsg.id, {
-                content: (getMessageContent(chatId, assistantMsg.id) || '') + chunk.content,
-              });
+              accContent += chunk.content;
+              updateMessage(chatId, assistantMsg.id, { content: accContent });
             } else if (chunk.type === 'reasoning') {
-              updateMessage(chatId, assistantMsg.id, {
-                reasoning: (getMessageReasoning(chatId, assistantMsg.id) || '') + chunk.content,
-              });
+              accReasoning += chunk.content;
+              updateMessage(chatId, assistantMsg.id, { reasoning: accReasoning });
             }
           } catch {}
         }
@@ -204,18 +204,6 @@ export default function MobileLayout() {
       setStreaming(false);
       abortRef.current = null;
     }
-  };
-
-  const getMessageContent = (chatId: string, msgId: string): string | null => {
-    const chat = chats.find((c) => c.id === chatId);
-    const msg = chat?.messages.find((m) => m.id === msgId);
-    return msg?.content || null;
-  };
-
-  const getMessageReasoning = (chatId: string, msgId: string): string | null => {
-    const chat = chats.find((c) => c.id === chatId);
-    const msg = chat?.messages.find((m) => m.id === msgId);
-    return msg?.reasoning || null;
   };
 
   const handleStop = () => {
