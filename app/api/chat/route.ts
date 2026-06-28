@@ -23,16 +23,20 @@ function buildOpenAIBody(messages: any[], model: string, systemPrompt: string, t
       msgs.push({ role: m.role, content: m.content });
     }
   }
+
+  const isReasoningModel = model.startsWith('o') || model.includes('deepseek-reasoner');
+
   const body: any = {
     model,
     messages: msgs,
     stream: true,
-    temperature,
   };
 
-  if (reasoning && (model.startsWith('o') || model.includes('deepseek-reasoner'))) {
+  if (reasoning && isReasoningModel) {
     body.reasoning_effort = 'medium';
     body.max_completion_tokens = 16384;
+  } else {
+    body.temperature = temperature;
   }
 
   return body;
@@ -64,7 +68,7 @@ function buildAnthropicBody(messages: any[], model: string, systemPrompt: string
 
   const body: any = {
     model,
-    max_tokens: 8192,
+    max_tokens: reasoning ? 20000 : 8192,
     system,
     messages: msgs,
     stream: true,

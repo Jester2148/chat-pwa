@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ChevronDown, ChevronRight, Loader2, Volume2, Square } from 'lucide-react';
+import { ChevronDown, Loader2, Volume2, Square, Brain } from 'lucide-react';
 import type { Message } from '@/lib/types';
 import { speakDevice, stopDeviceSpeech, isDeviceSpeaking } from '@/lib/tts';
 import ArtifactsDrawer from './ArtifactsDrawer';
@@ -11,17 +11,16 @@ import ArtifactsDrawer from './ArtifactsDrawer';
 interface Props {
   message: Message;
   isStreaming?: boolean;
-  onSpeak?: (text: string) => void;
 }
 
-export default function MessageBubble({ message, isStreaming, onSpeak }: Props) {
-  const [showReasoning, setShowReasoning] = useState(false);
+export default function MessageBubble({ message, isStreaming }: Props) {
+  const [isReasoningOpen, setIsReasoningOpen] = useState(true);
   const [isSpeakingNow, setIsSpeakingNow] = useState(false);
   const [artifactOpen, setArtifactOpen] = useState(false);
   const [artifactCode, setArtifactCode] = useState('');
 
   const isUser = message.role === 'user';
-  const hasReasoning = !!message.reasoning && message.reasoning.length > 0;
+  const hasReasoning = !!message.reasoning;
   const hasImages = !!message.images && message.images.length > 0;
 
   const handleSpeak = () => {
@@ -70,22 +69,23 @@ export default function MessageBubble({ message, isStreaming, onSpeak }: Props) 
         ) : (
           <>
             {hasReasoning && (
-              <div className="mb-2">
+              <div className="mb-2 border border-slate-700 rounded-lg bg-slate-800/50">
                 <button
-                  onClick={() => setShowReasoning(!showReasoning)}
-                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200"
+                  className="w-full flex items-center justify-between p-2 text-xs text-slate-400 hover:text-slate-200"
+                  onClick={() => setIsReasoningOpen(!isReasoningOpen)}
                 >
-                  {isStreaming ? (
-                    <Loader2 size={12} className="animate-spin" />
-                  ) : showReasoning ? (
-                    <ChevronDown size={12} />
-                  ) : (
-                    <ChevronRight size={12} />
-                  )}
-                  {isStreaming ? 'Thinking...' : 'View Reasoning'}
+                  <span className="flex items-center gap-2">
+                    {isStreaming && !message.content ? (
+                      <Loader2 size={12} className="animate-spin" />
+                    ) : (
+                      <Brain size={12} />
+                    )}
+                    {isStreaming && !message.content ? 'Thinking...' : 'View Reasoning'}
+                  </span>
+                  <ChevronDown size={14} className={`transition-transform ${isReasoningOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {showReasoning && (
-                  <div className="mt-1 p-2 bg-slate-900/50 rounded-lg text-xs text-slate-400 italic whitespace-pre-wrap">
+                {isReasoningOpen && (
+                  <div className="p-2 pt-0 text-xs text-slate-400 whitespace-pre-wrap border-t border-slate-700 mt-1">
                     {message.reasoning}
                   </div>
                 )}
@@ -93,27 +93,59 @@ export default function MessageBubble({ message, isStreaming, onSpeak }: Props) 
             )}
 
             {message.content && (
-              <div className="text-sm leading-relaxed break-words [&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_code]:bg-slate-800 [&_code]:px-1 [&_code]:rounded [&_pre]:bg-slate-800 [&_pre]:rounded-lg [&_pre]:p-3 [&_pre]:overflow-x-auto [&_pre]:my-2 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_a]:text-blue-400 [&_a]:underline [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_h1]:font-semibold [&_h2]:font-semibold [&_h3]:font-semibold [&_h1]:mb-2 [&_h2]:mb-2 [&_h3]:mb-2 [&_blockquote]:border-l-2 [&_blockquote]:border-slate-500 [&_blockquote]:pl-3 [&_blockquote]:italic [&_blockquote]:text-slate-300">
+              <div className="text-sm leading-relaxed break-words">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
+                    p: ({ node, ...props }) => <p className="mb-3 last:mb-0 leading-relaxed" {...props} />,
+                    ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                    ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                    h1: ({ node, ...props }) => <h1 className="text-xl font-bold mt-4 mb-2" {...props} />,
+                    h2: ({ node, ...props }) => <h2 className="text-lg font-bold mt-3 mb-2" {...props} />,
+                    h3: ({ node, ...props }) => <h3 className="text-base font-bold mt-3 mb-1" {...props} />,
+                    a: ({ node, ...props }) => (
+                      <a className="text-blue-400 hover:underline" target="_blank" rel="noreferrer" {...props} />
+                    ),
+                    blockquote: ({ node, ...props }) => (
+                      <blockquote className="border-l-4 border-slate-500 pl-3 italic text-slate-300 my-2" {...props} />
+                    ),
+                    table: ({ node, ...props }) => (
+                      <div className="overflow-x-auto my-3">
+                        <table className="min-w-full border-collapse border border-slate-600 text-sm" {...props} />
+                      </div>
+                    ),
+                    thead: ({ node, ...props }) => <thead className="bg-slate-700" {...props} />,
+                    th: ({ node, ...props }) => (
+                      <th className="border border-slate-600 px-3 py-1.5 text-left font-semibold" {...props} />
+                    ),
+                    td: ({ node, ...props }) => (
+                      <td className="border border-slate-600 px-3 py-1.5 align-top" {...props} />
+                    ),
                     code({ className, children, ...props }) {
                       const match = /language-(\w+)/.exec(className || '');
-                      const codeStr = String(children).replace(/\n$/, '');
-                      const isArtifact = match && ['html', 'react', 'python'].includes(match[1]);
-
-                      if (isArtifact) {
+                      const text = String(children).replace(/\n$/, '');
+                      if (match && ['html', 'react', 'python'].includes(match[1]) && text.length > 100) {
                         return (
                           <button
-                            onClick={() => handleArtifact(codeStr)}
+                            onClick={() => handleArtifact(text)}
                             className="text-blue-400 underline text-sm"
                           >
-                            View Artifact ({match![1]})
+                            View Artifact ({match[1]})
                           </button>
                         );
                       }
-                      return <code className={className} {...props}>{children}</code>;
+                      return (
+                        <code className="bg-slate-800 px-1 py-0.5 rounded text-xs" {...props}>
+                          {children}
+                        </code>
+                      );
                     },
+                    pre: ({ node, ...props }) => (
+                      <pre
+                        className="bg-[#0d0d0f] border border-slate-700 rounded-lg p-3 my-2 overflow-x-auto text-xs"
+                        {...props}
+                      />
+                    ),
                   }}
                 >
                   {message.content}
