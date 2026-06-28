@@ -73,8 +73,32 @@ export default function SettingsModal({ open, onClose }: Props) {
             <p className="text-xs text-slate-500 mt-1">Format: provider/model-name</p>
           </div>
 
+          <div>
+            <h3 className="text-sm font-medium text-slate-300 mb-2 mt-4">Web Search & Scraping</h3>
+            <div className="mb-2">
+              <label className="text-xs text-slate-400 block mb-1">Serper API Key</label>
+              <input
+                type="password"
+                value={settings.serperApiKey || ''}
+                onChange={(e) => setSettings({ serperApiKey: e.target.value })}
+                placeholder="Enter Serper.dev API key"
+                className="w-full bg-slate-800 text-white text-sm rounded-lg px-3 py-2 border border-slate-700"
+              />
+            </div>
+            <div className="mb-2">
+              <label className="text-xs text-slate-400 block mb-1">Firecrawl API Key</label>
+              <input
+                type="password"
+                value={settings.firecrawlApiKey || ''}
+                onChange={(e) => setSettings({ firecrawlApiKey: e.target.value })}
+                placeholder="Enter Firecrawl API key"
+                className="w-full bg-slate-800 text-white text-sm rounded-lg px-3 py-2 border border-slate-700"
+              />
+            </div>
+          </div>
+
           <div className="flex items-center justify-between">
-            <label className="text-sm text-slate-300">Web Search (Serper)</label>
+            <label className="text-sm text-slate-300">Web Search (Enabled)</label>
             <button
               onClick={() => setSettings({ searchEnabled: !settings.searchEnabled })}
               className={`relative w-10 h-5 rounded-full transition-colors ${

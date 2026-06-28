@@ -6,17 +6,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { query } = await req.json();
+  const { query, apiKey } = await req.json();
 
   if (!query || typeof query !== 'string') {
     return NextResponse.json({ error: 'Missing query' }, { status: 400 });
+  }
+
+  if (!apiKey) {
+    return NextResponse.json({ error: 'Missing Serper API key. Add it in Settings.' }, { status: 400 });
   }
 
   try {
     const res = await fetch('https://google.serper.dev/search', {
       method: 'POST',
       headers: {
-        'X-API-KEY': process.env.SERPER_API_KEY || '',
+        'X-API-KEY': apiKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ q: query, num: 5 }),

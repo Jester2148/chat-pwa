@@ -220,7 +220,7 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
-  const { provider, model, apiKey, messages, systemPrompt, searchEnabled, temperature = 0.7 } = await req.json();
+  const { provider, model, apiKey, messages, systemPrompt, searchEnabled, searchApiKey, temperature = 0.7 } = await req.json();
 
   let finalSystemPrompt = systemPrompt || '';
 
@@ -229,7 +229,7 @@ export async function POST(req: Request) {
       const searchRes = await fetch(`${new URL(req.url).origin}/api/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: req.headers.get('Authorization') || '' },
-        body: JSON.stringify({ query: messages[messages.length - 1]?.content || '' }),
+        body: JSON.stringify({ query: messages[messages.length - 1]?.content || '', apiKey: searchApiKey }),
       });
       if (searchRes.ok) {
         const searchData = await searchRes.json();

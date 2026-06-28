@@ -32,6 +32,8 @@ export interface Agent {
 
 export interface Settings {
   apiKeys: Record<Provider, string>;
+  serperApiKey: string;
+  firecrawlApiKey: string;
   summarizationModel: string;
   searchEnabled: boolean;
   ttsMode: 'off' | 'device' | 'api';

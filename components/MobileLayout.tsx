@@ -11,7 +11,6 @@ import {
   VolumeX,
   Globe,
   GlobeOff,
-  Search,
   Eye,
   EyeOff,
   ChevronLeft,
@@ -19,13 +18,14 @@ import {
   Check,
   X,
 } from 'lucide-react';
-import { useStore, getActiveChat } from '@/lib/store';
-import type { Provider, Message, StreamChunk } from '@/lib/types';
+import { useStore } from '@/lib/store';
+import type { Message, StreamChunk } from '@/lib/types';
 import { trimContext } from '@/lib/contextManager';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
 import SettingsModal from './SettingsModal';
 import AgentsLibrary from './AgentsLibrary';
+import ModelSelector from './ModelSelector';
 
 function generateId(): string {
   return crypto.randomUUID();
@@ -149,6 +149,7 @@ export default function MobileLayout() {
           })),
           systemPrompt: chat.messages.find((m) => m.role === 'system')?.content || '',
           searchEnabled: settings.searchEnabled,
+          searchApiKey: settings.searchEnabled ? settings.serperApiKey || '' : '',
           temperature: 0.7,
         }),
         signal: abortRef.current.signal,
@@ -228,9 +229,9 @@ export default function MobileLayout() {
   const activeMsgs = activeChat?.messages || [];
 
   return (
-    <div className="h-dvh flex flex-col bg-slate-950 text-white max-w-md mx-auto relative overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-slate-950 text-white relative overflow-hidden">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm">
+      <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <button onClick={() => setDrawerOpen(true)} className="text-slate-400 hover:text-white p-1">
             <Menu size={20} />
@@ -295,7 +296,7 @@ export default function MobileLayout() {
       </header>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1 min-h-0">
         {activeMsgs.length === 0 && !streaming && (
           <div className="flex flex-col items-center justify-center h-full text-slate-500">
             <div className="text-4xl mb-3">💬</div>
@@ -328,6 +329,13 @@ export default function MobileLayout() {
           >
             <X size={12} /> Stop generating
           </button>
+        </div>
+      )}
+
+      {/* Model Selector Toolbar */}
+      {activeChat && (
+        <div className="flex-shrink-0 px-4 py-1.5 border-t border-slate-800 bg-slate-900/60">
+          <ModelSelector chatId={activeChat.id} provider={activeChat.provider} model={activeChat.model} />
         </div>
       )}
 

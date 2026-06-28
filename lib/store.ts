@@ -6,6 +6,8 @@ import type { Chat, Message, Agent, Provider, Settings } from './types';
 
 const DEFAULT_SETTINGS: Settings = {
   apiKeys: {} as Record<Provider, string>,
+  serperApiKey: '',
+  firecrawlApiKey: '',
   summarizationModel: 'openai/gpt-4o-mini',
   searchEnabled: false,
   ttsMode: 'off',
@@ -32,6 +34,7 @@ interface AppState {
   setSettings: (partial: Partial<Settings>) => void;
   toggleIncognito: () => void;
   setActiveChat: (id: string | null) => void;
+  updateChat: (id: string, partial: Partial<Chat>) => void;
   addAgent: (agent: Agent) => void;
   removeAgent: (id: string) => void;
 }
@@ -132,6 +135,14 @@ export const useStore = create<AppState>()(
 
       setActiveChat: (id) => {
         set({ activeChatId: id });
+      },
+
+      updateChat: (id, partial) => {
+        set((state) => ({
+          chats: state.chats.map((c) =>
+            c.id === id ? { ...c, ...partial } : c
+          ),
+        }));
       },
 
       addAgent: (agent) => {
