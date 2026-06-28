@@ -6,7 +6,7 @@ const PROVIDER_BASE_URLS: Record<string, string> = {
   minimax: 'https://api.minimax.chat/v1',
 };
 
-function buildOpenAIBody(messages: any[], model: string, systemPrompt: string, temperature: number) {
+function buildOpenAIBody(messages: any[], model: string, systemPrompt: string, temperature: number, reasoning: boolean) {
   const msgs: any[] = [];
   if (systemPrompt) {
     msgs.push({ role: 'system', content: systemPrompt });
@@ -23,15 +23,22 @@ function buildOpenAIBody(messages: any[], model: string, systemPrompt: string, t
       msgs.push({ role: m.role, content: m.content });
     }
   }
-  return {
+  const body: any = {
     model,
     messages: msgs,
     stream: true,
     temperature,
   };
+
+  if (reasoning && (model.startsWith('o') || model.includes('deepseek-reasoner'))) {
+    body.reasoning_effort = 'medium';
+    body.max_completion_tokens = 16384;
+  }
+
+  return body;
 }
 
-function buildAnthropicBody(messages: any[], model: string, systemPrompt: string, temperature: number) {
+function buildAnthropicBody(messages: any[], model: string, systemPrompt: string, temperature: number, reasoning: boolean) {
   const msgs = messages
     .filter((m: any) => m.role !== 'system')
     .map((m: any) => {
@@ -55,7 +62,7 @@ function buildAnthropicBody(messages: any[], model: string, systemPrompt: string
     }
   }
 
-  return {
+  const body: any = {
     model,
     max_tokens: 8192,
     system,
@@ -63,6 +70,12 @@ function buildAnthropicBody(messages: any[], model: string, systemPrompt: string
     stream: true,
     temperature,
   };
+
+  if (reasoning) {
+    body.thinking = { type: 'enabled', budget_tokens: 16000 };
+  }
+
+  return body;
 }
 
 function buildGeminiBody(messages: any[], model: string, systemPrompt: string, temperature: number) {
@@ -215,7 +228,7 @@ async function streamGemini(url: string, apiKey: string, body: any, encoder: Tex
 
 export async function POST(req: Request) {
 
-  const { provider, model, apiKey, messages, systemPrompt, searchEnabled, searchApiKey, temperature = 0.7 } = await req.json();
+  const { provider, model, apiKey, messages, systemPrompt, searchEnabled, searchApiKey, reasoning: enableReasoning, temperature = 0.7 } = await req.json();
 
   let finalSystemPrompt = systemPrompt || '';
 
@@ -247,13 +260,13 @@ export async function POST(req: Request) {
         const baseURL = PROVIDER_BASE_URLS[provider];
 
         if (provider === 'anthropic') {
-          const body = buildAnthropicBody(messages, model, finalSystemPrompt, temperature);
+          const body = buildAnthropicBody(messages, model, finalSystemPrompt, temperature, enableReasoning);
           await streamAnthropic('https://api.anthropic.com/v1/messages', apiKey, body, encoder, writer);
         } else if (provider === 'google') {
           const body = buildGeminiBody(messages, model, finalSystemPrompt, temperature);
           await streamGemini(`https://generativelanguage.googleapis.com/v1beta/models/${model}`, apiKey, body, encoder, writer);
         } else if (baseURL) {
-          const body = buildOpenAIBody(messages, model, finalSystemPrompt, temperature);
+          const body = buildOpenAIBody(messages, model, finalSystemPrompt, temperature, enableReasoning);
           await streamOpenAI(`${baseURL}/chat/completions`, apiKey, body, encoder, writer);
         } else {
           throw new Error(`Unknown provider: ${provider}`);

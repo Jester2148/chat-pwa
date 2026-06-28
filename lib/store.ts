@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS: Settings = {
   firecrawlApiKey: '',
   summarizationModel: 'openai/gpt-4o-mini',
   searchEnabled: false,
+  reasoningEnabled: false,
   ttsMode: 'off',
 };
 

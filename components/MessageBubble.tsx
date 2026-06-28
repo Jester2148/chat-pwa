@@ -93,7 +93,7 @@ export default function MessageBubble({ message, isStreaming, onSpeak }: Props) 
             )}
 
             {message.content && (
-              <div className="prose prose-invert prose-sm max-w-none break-words">
+              <div className="text-sm leading-relaxed break-words [&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_code]:bg-slate-800 [&_code]:px-1 [&_code]:rounded [&_pre]:bg-slate-800 [&_pre]:rounded-lg [&_pre]:p-3 [&_pre]:overflow-x-auto [&_pre]:my-2 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_a]:text-blue-400 [&_a]:underline [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_h1]:font-semibold [&_h2]:font-semibold [&_h3]:font-semibold [&_h1]:mb-2 [&_h2]:mb-2 [&_h3]:mb-2 [&_blockquote]:border-l-2 [&_blockquote]:border-slate-500 [&_blockquote]:pl-3 [&_blockquote]:italic [&_blockquote]:text-slate-300">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -112,15 +112,7 @@ export default function MessageBubble({ message, isStreaming, onSpeak }: Props) 
                           </button>
                         );
                       }
-
-                      return (
-                        <code className={className} {...props}>
-                          {children}
-                        </code>
-                      );
-                    },
-                    pre({ children }) {
-                      return <pre className="bg-slate-900 rounded-lg p-3 overflow-x-auto text-xs">{children}</pre>;
+                      return <code className={className} {...props}>{children}</code>;
                     },
                   }}
                 >

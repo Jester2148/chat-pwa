@@ -36,6 +36,7 @@ export interface Settings {
   firecrawlApiKey: string;
   summarizationModel: string;
   searchEnabled: boolean;
+  reasoningEnabled: boolean;
   ttsMode: 'off' | 'device' | 'api';
 }
 

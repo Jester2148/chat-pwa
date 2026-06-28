@@ -13,6 +13,7 @@ import {
   GlobeOff,
   Eye,
   EyeOff,
+  Brain,
   ChevronLeft,
   Pencil,
   Check,
@@ -147,6 +148,7 @@ export default function MobileLayout() {
           systemPrompt: chat.messages.find((m) => m.role === 'system')?.content || '',
           searchEnabled: settings.searchEnabled,
           searchApiKey: settings.searchEnabled ? settings.serperApiKey || '' : '',
+          reasoning: settings.reasoningEnabled,
           temperature: 0.7,
         }),
         signal: abortRef.current.signal,
@@ -263,6 +265,13 @@ export default function MobileLayout() {
             title="Web Search"
           >
             {settings.searchEnabled ? <Globe size={16} /> : <GlobeOff size={16} />}
+          </button>
+          <button
+            onClick={() => setSettings({ reasoningEnabled: !settings.reasoningEnabled })}
+            className={`p-1.5 rounded-lg ${settings.reasoningEnabled ? 'text-purple-400 bg-purple-500/10' : 'text-slate-400 hover:text-white'}`}
+            title={settings.reasoningEnabled ? 'Reasoning On' : 'Reasoning Off'}
+          >
+            <Brain size={16} />
           </button>
           <button
             onClick={toggleIncognito}
