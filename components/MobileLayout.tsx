@@ -228,6 +228,9 @@ export default function MobileLayout() {
           <button onClick={() => setDrawerOpen(true)} className="text-slate-400 hover:text-white p-1">
             <Menu size={20} />
           </button>
+          <button onClick={handleNewChat} className="text-slate-400 hover:text-white p-1" title="New Chat">
+            <Plus size={20} />
+          </button>
           {activeChat && (
             <div className="text-sm font-medium truncate max-w-[160px]">
               {editingTitle === activeChat.id ? (
